@@ -1,8 +1,14 @@
-var touchX;
-var touchY;
+// touch position relative to document
+var touchX, touchY;
+
+// touch position relative to device screen
+var screenX, screenY;
+
+// item currently grabbed and being dragged
 var grabbedItem = null;
-var itemOrigX;
-var itemOrigY;
+
+// grabbed item's original X/Y coordinates
+var itemOrigX, itemOrigY;
 
 document.addEventListener("deviceready", function(e) {
 	initializeApp(e);
@@ -34,16 +40,16 @@ function updateTouchXY(e) {
 	// update global touch x/y variables
 	touchX = e.touches[0].pageX;
 	touchY = e.touches[0].pageY;
-	// check for touch moved to edge of screen
-	// var screenX = e.touches[0].screenX;
-	// var screenY = e.touches[0].screenY;
+	screenX = e.touches[0].screenX;
+	screenY = e.touches[0].screenY;
 	// if(screenX <= 5 || screenX >= 315 || screenY <= 5 || screenY >= 550) {
 	// 	returnGrab(e);
 	// }
 }
 
 function updateGrabXY(e) {
-	grabbedItem.offset({left: touchX - grabbedItem.width()/2, top: touchY - grabbedItem.height()/2});
+	grabbedItem.stop();
+	grabbedItem.transition({left: touchX - grabbedItem.width()/2, top: touchY - grabbedItem.height()/2});
 }
 
 function returnGrab(e) {
@@ -55,10 +61,16 @@ function returnGrab(e) {
 function grabThis(caller, e) {
 	$(caller).clone().attr("id", "grabbedItem").insertAfter($(caller));
 	grabbedItem = $("#grabbedItem");
-	itemOrigX = grabbedItem.offset().left;
-	itemOrigY = grabbedItem.offset().top;
-	grabbedItem.offset({left: touchX - grabbedItem.width()/2, top: touchY - grabbedItem.height()/2});
+	itemOrigX = $(caller).offset().left;
+	itemOrigY = $(caller).offset().top;
 	$("body").on("touchmove", function(e) {
 		e.preventDefault();
 	})
+	grabAnimation(grabbedItem);
+}
+
+// shrink animation for when an item is grabbed
+// "element" should be a jQuery object
+function grabAnimation(element) {
+	element.transition({scale: 0.7, left: screenX, top: screenY});
 }

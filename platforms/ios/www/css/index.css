@@ -50,16 +50,13 @@ body {
 }
 
 #grabbedItem {
-    position: absolute;
+    position: fixed !important;
     z-index: 99999;
-    top: 0px;
-    left: 0px;
-    width: 80px;
 }
 
 .grabbable {
     position: relative;
-    width: 80%;
+    width: 120px;
     margin: 20% auto;
     display: block;
 }
